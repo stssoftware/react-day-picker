@@ -1,3 +1,4 @@
+import getDaysInMonth from 'date-fns/getDaysInMonth';
 import { clone } from './DateUtils';
 import { getFirstDayOfWeek } from './LocaleUtils';
 import defaultClassNames from './classNames';
@@ -5,19 +6,6 @@ import defaultClassNames from './classNames';
 export function cancelEvent(e) {
   e.preventDefault();
   e.stopPropagation();
-}
-
-export function getFirstDayOfMonth(d) {
-  return new Date(d.getFullYear(), d.getMonth(), 1, 12);
-}
-
-export function getDaysInMonth(d) {
-  const resultDate = getFirstDayOfMonth(d);
-
-  resultDate.setMonth(resultDate.getMonth() + 1);
-  resultDate.setDate(resultDate.getDate() - 1);
-
-  return resultDate.getDate();
 }
 
 export function getModifiersFromProps(props) {
@@ -40,16 +28,6 @@ export function getFirstDayOfWeekFromProps(props) {
     return localeUtils.getFirstDayOfWeek(locale);
   }
   return 0;
-}
-
-export function isRangeOfDates(value) {
-  return !!(value && value.from && value.to);
-}
-
-export function getMonthsDiff(d1, d2) {
-  return (
-    d2.getMonth() - d1.getMonth() + 12 * (d2.getFullYear() - d1.getFullYear())
-  );
 }
 
 export function getWeekArray(
@@ -114,13 +92,6 @@ export function getWeekArray(
   }
 
   return weekArray;
-}
-
-export function startOfMonth(d) {
-  const newDate = clone(d);
-  newDate.setDate(1);
-  newDate.setHours(12, 0, 0, 0); // always set noon to avoid time zone issues
-  return newDate;
 }
 
 export function getDayNodes(node, classNames) {

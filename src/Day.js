@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import assign from 'object-assign';
 import PropTypes from 'prop-types';
-import { isSameDay } from './DateUtils';
+import isSameDay from './utils/isSameDay';
+
 import { hasOwnProp } from './Helpers';
 
 import defaultClassNames from './classNames';

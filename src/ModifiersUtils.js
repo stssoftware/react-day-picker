@@ -1,5 +1,8 @@
-import { isDayAfter, isDayBefore, isDayInRange, isSameDay } from './DateUtils';
-import { isRangeOfDates } from './Helpers';
+import isDayAfter from './utils/isDayAfter';
+import isDayBefore from './utils/isDayBefore';
+import isDayInRange from './utils/isDayInRange';
+import isRangeOfDates from './utils/isRangeOfDates';
+import isSameDay from './utils/isSameDay';
 
 /**
  * Return `true` if a date matches the specified modifier.

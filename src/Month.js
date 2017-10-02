@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import getISOWeek from 'date-fns/getISOWeek';
 
 import Weekdays from './Weekdays';
 import Day from './Day';
 
 import * as ModifiersUtils from './ModifiersUtils';
 import * as Helpers from './Helpers';
-import * as DateUtils from './DateUtils';
+
+import isSameDay from './utils/isSameDay';
 
 export default class Month extends Component {
   static propTypes = {
@@ -67,7 +69,7 @@ export default class Month extends Component {
     const propModifiers = Helpers.getModifiersFromProps(this.props);
     const dayModifiers = ModifiersUtils.getModifiersForDay(day, propModifiers);
     if (
-      DateUtils.isSameDay(day, new Date()) &&
+      isSameDay(day, new Date()) &&
       !Object.prototype.hasOwnProperty.call(
         propModifiers,
         this.props.classNames.today
@@ -175,7 +177,7 @@ export default class Month extends Component {
           {weeks.map(week => {
             let weekNumber;
             if (showWeekNumbers) {
-              weekNumber = DateUtils.getWeekNumber(week[0]);
+              weekNumber = getISOWeek(week[0]);
             }
             return (
               <div

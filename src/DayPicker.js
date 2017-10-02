@@ -7,9 +7,14 @@ import Month from './Month';
 import Weekday from './Weekday';
 
 import * as Helpers from './Helpers';
-import * as DateUtils from './DateUtils';
 import * as LocaleUtils from './LocaleUtils';
 import classNames from './classNames';
+
+import addMonths from './utils/addMonths';
+import dateToUTCDay from './utils/dateToUTCDay';
+import differenceInCalendarMonths from './utils/differenceInCalendarMonths';
+import startOfMonth from './utils/startOfMonth';
+import subMonths from './utils/subMonths';
 
 import { ENTER, SPACE, LEFT, UP, DOWN, RIGHT } from './keys';
 
@@ -126,7 +131,7 @@ export default class DayPicker extends Component {
   static defaultProps = {
     classNames,
     tabIndex: 0,
-    initialMonth: new Date(),
+    initialMonth: dateToUTCDay(new Date()),
     numberOfMonths: 1,
     labels: {
       previousMonth: 'Previous Month',
@@ -158,14 +163,15 @@ export default class DayPicker extends Component {
   }
 
   getStateFromProps = props => {
-    const initialMonth = Helpers.startOfMonth(
-      props.month || props.initialMonth
-    );
+    const initialMonth = startOfMonth(props.month || props.initialMonth);
     let currentMonth = initialMonth;
 
     if (props.pagedNavigation && props.numberOfMonths > 1 && props.fromMonth) {
-      const diffInMonths = Helpers.getMonthsDiff(props.fromMonth, currentMonth);
-      currentMonth = DateUtils.addMonths(
+      const diffInMonths = differenceInCalendarMonths(
+        currentMonth,
+        props.fromMonth
+      );
+      currentMonth = addMonths(
         props.fromMonth,
         Math.floor(diffInMonths / props.numberOfMonths) * props.numberOfMonths
       );
@@ -174,25 +180,22 @@ export default class DayPicker extends Component {
   };
 
   getNextNavigableMonth() {
-    return DateUtils.addMonths(
-      this.state.currentMonth,
-      this.props.numberOfMonths
-    );
+    return addMonths(this.state.currentMonth, this.props.numberOfMonths);
   }
 
   getPreviousNavigableMonth() {
-    return DateUtils.addMonths(this.state.currentMonth, -1);
+    return subMonths(this.state.currentMonth, 1);
   }
 
   dayPicker = null;
 
   allowPreviousMonth() {
-    const previousMonth = DateUtils.addMonths(this.state.currentMonth, -1);
+    const previousMonth = subMonths(this.state.currentMonth, 1);
     return this.allowMonth(previousMonth);
   }
 
   allowNextMonth() {
-    const nextMonth = DateUtils.addMonths(
+    const nextMonth = addMonths(
       this.state.currentMonth,
       this.props.numberOfMonths
     );
@@ -203,8 +206,8 @@ export default class DayPicker extends Component {
     const { fromMonth, toMonth, canChangeMonth } = this.props;
     if (
       !canChangeMonth ||
-      (fromMonth && Helpers.getMonthsDiff(fromMonth, d) < 0) ||
-      (toMonth && Helpers.getMonthsDiff(toMonth, d) > 0)
+      (fromMonth && differenceInCalendarMonths(fromMonth, d) > 0) ||
+      (toMonth && differenceInCalendarMonths(toMonth, d) < 0)
     ) {
       return false;
     }
@@ -219,7 +222,7 @@ export default class DayPicker extends Component {
     if (!this.allowMonth(d)) {
       return;
     }
-    this.setState({ currentMonth: Helpers.startOfMonth(d) }, () => {
+    this.setState({ currentMonth: startOfMonth(d) }, () => {
       if (callback) {
         callback();
       }
@@ -236,7 +239,7 @@ export default class DayPicker extends Component {
     const deltaMonths = this.props.pagedNavigation
       ? this.props.numberOfMonths
       : 1;
-    const nextMonth = DateUtils.addMonths(this.state.currentMonth, deltaMonths);
+    const nextMonth = addMonths(this.state.currentMonth, deltaMonths);
     this.showMonth(nextMonth, callback);
   };
 
@@ -247,10 +250,7 @@ export default class DayPicker extends Component {
     const deltaMonths = this.props.pagedNavigation
       ? this.props.numberOfMonths
       : 1;
-    const previousMonth = DateUtils.addMonths(
-      this.state.currentMonth,
-      -deltaMonths
-    );
+    const previousMonth = subMonths(this.state.currentMonth, deltaMonths);
     this.showMonth(previousMonth, callback);
   };
 
@@ -258,7 +258,7 @@ export default class DayPicker extends Component {
     if (!this.allowYearChange()) {
       return;
     }
-    const nextMonth = DateUtils.addMonths(this.state.currentMonth, 12);
+    const nextMonth = addMonths(this.state.currentMonth, 12);
     this.showMonth(nextMonth);
   }
 
@@ -266,7 +266,7 @@ export default class DayPicker extends Component {
     if (!this.allowYearChange()) {
       return;
     }
-    const nextMonth = DateUtils.addMonths(this.state.currentMonth, -12);
+    const nextMonth = subMonths(this.state.currentMonth, 12);
     this.showMonth(nextMonth);
   }
 
@@ -413,7 +413,7 @@ export default class DayPicker extends Component {
   handleOutsideDayClick(day) {
     const { currentMonth } = this.state;
     const { numberOfMonths } = this.props;
-    const diffInMonths = Helpers.getMonthsDiff(currentMonth, day);
+    const diffInMonths = differenceInCalendarMonths(day, currentMonth);
     if (diffInMonths > 0 && diffInMonths >= numberOfMonths) {
       this.showNextMonth();
     } else if (diffInMonths < 0) {
@@ -462,7 +462,7 @@ export default class DayPicker extends Component {
     const firstDayOfWeek = Helpers.getFirstDayOfWeekFromProps(this.props);
 
     for (let i = 0; i < this.props.numberOfMonths; i += 1) {
-      const month = DateUtils.addMonths(this.state.currentMonth, i);
+      const month = addMonths(this.state.currentMonth, i);
 
       months.push(
         <Month
