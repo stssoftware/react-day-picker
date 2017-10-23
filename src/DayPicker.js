@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { deprecate } from 'react-is-deprecated';
 import Caption from './Caption';
 import Navbar from './Navbar';

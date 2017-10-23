@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import DayPickerPropTypes from './PropTypes';
 
 export default function Weekday({ weekday, className, localeUtils, locale }) {

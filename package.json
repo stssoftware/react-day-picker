@@ -94,6 +94,7 @@
     "webpack": "1.13.2"
   },
   "dependencies": {
+    "prop-types": "^15.6.0",
     "react-is-deprecated": "0.1.2"
   }
 }
